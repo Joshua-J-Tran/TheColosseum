@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Strong Tracker — Tribute Board</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0b0f14; color: #e6edf3; margin: 0; }
+    header { padding: 20px; text-align: center; background: #121923; }
+    h1 { margin: 0; font-size: 1.6em; }
+    .summary { padding: 16px; text-align: center; background:#18222e; }
+    .summary h2 { margin: 0 0 8px; font-size: 1.2em; }
+    .summary p { margin: 4px 0; }
+    .board { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 14px; padding: 20px; }
+    .card { background: #1a2330; border: 1px solid #2a3442; border-radius: 12px; overflow: hidden; position: relative; text-align: center; }
+    .card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .meta { padding: 10px; }
+    .name { font-weight: bold; margin: 6px 0; }
+    .notes { color: #9aa6b2; font-size: 0.9em; }
+    .x { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 2em; font-weight: bold; color: rgba(255,90,95,.9); background: rgba(0,0,0,.6); opacity: 0; transition: opacity .3s ease; }
+    .out .x { opacity: 1; }
+    .out img { filter: grayscale(90%) brightness(.6); }
+    .out .name { text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: #ff5a5f; }
+    .sponsors { padding: 0 20px 20px; }
+    .sponsors h3 { margin: 0 0 8px; font-size: 1.1em; }
+    .sponsors ul { list-style: none; padding: 0; margin: 0; }
+    .sponsors li { background:#1a2330; border:1px solid #2a3442; border-radius:8px; padding:8px 10px; margin-bottom:6px; }
+    .sponsors strong { color:#ffd166; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tribute Board</h1>
+    <p>Who's the strongest of them all</p>
+  </header>
+
+  <section class="summary">
+    <h2 id="prizePool">Prize Pool: $0</h2>
+  </section>
+
+  <main>
+    <section class="board" id="board"></section>
+  </main>
+
+  <section class="sponsors">
+    <h3>Sponsors</h3>
+    <ul id="sponsorList"></ul>
+  </section>
+
+  <script>
+    // Hardcoded participants dictionary
+    const participants = [
+      { name: 'Cory', notes: 'Contestant #1', image: 'cory.jpg', out: false },
+      { name: 'Ted', notes: 'Contestant #3', image: 'ted.jpg', out: false },
+      { name: 'Stephen', notes: 'Contestant #4', image: 'stephen.jpg', out: false }
+    ];
+
+    // Sponsors dictionary
+    const sponsors = [
+      { name: 'Kream', amount: 50, note: 'Balls' }
+    ];
+
+    function render(){
+    // prize pool
+    const outCount = participants.filter(p => p.out).length;
+    const poolFromElims = outCount * 10;
+    const poolFromSponsors = sponsors.reduce((sum, s) => sum + s.amount, 0);
+    const pool = poolFromElims + poolFromSponsors;
+
+    document.getElementById('prizePool').textContent =
+        `Prize Pool: $${pool} (Elims $${poolFromElims} + Sponsors $${poolFromSponsors})`;
+
+    // participants
+      const board = document.getElementById('board');
+      board.innerHTML = '';
+      participants.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'card' + (p.out ? ' out' : '');
+        card.innerHTML = `
+          <img src="${p.image}" alt="${p.name}" />
+          <div class="x">X</div>
+          <div class="meta">
+            <div class="name">${p.name}</div>
+            <div class="notes">${p.notes}</div>
+          </div>
+        `;
+        board.appendChild(card);
+      });
+
+      // sponsors
+      const sponsorList = document.getElementById('sponsorList');
+      sponsorList.innerHTML = '';
+      sponsors.forEach(s => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${s.name}</strong> — $${s.amount} <br><em>${s.note}</em>`;
+        sponsorList.appendChild(li);
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
