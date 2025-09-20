@@ -21,16 +21,33 @@
     .out .x { opacity: 1; }
     .out img { filter: grayscale(90%) brightness(.6); }
     .out .name { text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: #ff5a5f; }
-    .sponsors { padding: 0 20px 20px; }
-    .sponsors h3 { margin: 0 0 8px; font-size: 1.1em; }
-    .sponsors ul { list-style: none; padding: 0; margin: 0; }
-    .sponsors li { background:#1a2330; border:1px solid #2a3442; border-radius:8px; padding:8px 10px; margin-bottom:6px; }
-    .sponsors strong { color:#ffd166; }
+    .sponsors strong, .comments strong { color:#ffd166; }
+    .comments em { color:#9aa6b2; font-style: normal; }
+
+    .sponsors, .comments, .rules { 
+      padding: 0 20px 20px; 
+    }
+    .sponsors h3, .comments h3, .rules h3 { 
+      margin: 0 0 8px; 
+      font-size: 1.1em; 
+    }
+    .sponsors ul, .comments ul, .rules ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sponsors li, .comments li, .rules li { 
+      background:#1a2330; 
+      border:1px solid #2a3442; 
+      border-radius:8px; 
+      padding:8px 10px; 
+      margin-bottom:6px; 
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Tribute Board</h1>
+    <h1>Legoland Semen Retention Competition 2025</h1>
     <p>Who's the strongest of them all</p>
   </header>
 
@@ -47,6 +64,16 @@
     <ul id="sponsorList"></ul>
   </section>
 
+  <section class="comments">
+    <h3>Comments</h3>
+    <ul id="commentList"></ul>
+  </section>
+
+  <section class="rules">
+    <h3>Rules</h3>
+    <ul id="ruleList"></ul>
+  </section>
+
   <script>
     // Hardcoded participants dictionary
     const participants = [
@@ -60,20 +87,34 @@
 
     // Sponsors dictionary
     const sponsors = [
-      { name: 'Kream', amount: 50, note: 'Balls' }
+      { name: 'Kream', amount: 50, note: 'I, Kream, am your proud and honorable sponsor! I am glad to provide a crisp $50 bill to whoever wins this event. Thank you for each participant who participates and may the best retention win!! ' }
+    ];
+
+    // Comments dictionary
+    const comments = [
+      { name: 'Joss Jones', message: 'Is this shit real?' },
+      { name: 'CJ', message: 'I\'d win if I participate, okay?' }
+    ];
+
+    // Rules dictionary
+    const rules = [
+      { text: 'Each participant contributes $10' },
+      { text: 'Competition lasts until last man standing' },
+      { text: 'Participants must choose a corresponding number and will be displayed on the website' },
+      { text: 'The competition is run via an honor system and you must self-report if you are out' }
     ];
 
     function render(){
-    // prize pool
-    const outCount = participants.filter(p => p.out).length;
-    const poolFromElims = outCount * 10;
-    const poolFromSponsors = sponsors.reduce((sum, s) => sum + s.amount, 0);
-    const pool = poolFromElims + poolFromSponsors;
+      // prize pool
+      const outCount = participants.filter(p => p.out).length;
+      const poolFromElims = outCount * 10;
+      const poolFromSponsors = sponsors.reduce((sum, s) => sum + s.amount, 0);
+      const pool = poolFromElims + poolFromSponsors;
 
-    document.getElementById('prizePool').textContent =
-        `Prize Pool: $${pool} (Elims $${poolFromElims} + Sponsors $${poolFromSponsors})`;
+      document.getElementById('prizePool').textContent =
+          `Prize Pool: $${pool} (Elims $${poolFromElims} + Sponsors $${poolFromSponsors})`;
 
-    // participants
+      // participants
       const board = document.getElementById('board');
       board.innerHTML = '';
       participants.forEach(p => {
@@ -97,6 +138,24 @@
         const li = document.createElement('li');
         li.innerHTML = `<strong>${s.name}</strong> — $${s.amount} <br><em>${s.note}</em>`;
         sponsorList.appendChild(li);
+      });
+
+      // comments
+      const commentList = document.getElementById('commentList');
+      commentList.innerHTML = '';
+      comments.forEach(c => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${c.name}</strong>: <em>${c.message}</em>`;
+        commentList.appendChild(li);
+      });
+
+      // rules
+      const ruleList = document.getElementById('ruleList');
+      ruleList.innerHTML = '';
+      rules.forEach(r => {
+        const li = document.createElement('li');
+        li.textContent = r.text;
+        ruleList.appendChild(li);
       });
     }
 
