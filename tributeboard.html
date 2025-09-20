@@ -7,10 +7,9 @@
   <style>
     body { font-family: system-ui, sans-serif; background: #0b0f14; color: #e6edf3; margin: 0; }
     header { padding: 20px; text-align: center; background: #121923; }
-    h1 { margin: 0; font-size: 1.6em; }
+    h1 { margin: 0; font-size: 2em; }
     .summary { padding: 16px; text-align: center; background:#18222e; }
     .summary h2 { margin: 0 0 8px; font-size: 1.2em; }
-    .summary p { margin: 4px 0; }
     .board { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 14px; padding: 20px; }
     .card { background: #1a2330; border: 1px solid #2a3442; border-radius: 12px; overflow: hidden; position: relative; text-align: center; }
     .card img { width: 100%; height: 200px; object-fit: cover; display: block; }
@@ -21,22 +20,23 @@
     .out .x { opacity: 1; }
     .out img { filter: grayscale(90%) brightness(.6); }
     .out .name { text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: #ff5a5f; }
-    .sponsors strong, .comments strong { color:#ffd166; }
-    .comments em { color:#9aa6b2; font-style: normal; }
 
-    .sponsors, .comments, .rules { 
+    .sponsors strong, .comments strong, .gamble strong { color:#ffd166; }
+    .comments em, .gamble em { color:#9aa6b2; font-style: normal; }
+
+    .sponsors, .comments, .gamble, .rules { 
       padding: 0 20px 20px; 
     }
-    .sponsors h3, .comments h3, .rules h3 { 
+    .sponsors h3, .comments h3, .gamble h3, .rules h3 { 
       margin: 0 0 8px; 
       font-size: 1.1em; 
     }
-    .sponsors ul, .comments ul, .rules ul { 
+    .sponsors ul, .comments ul, .gamble ul, .rules ul { 
       list-style: none; 
       padding: 0; 
       margin: 0; 
     }
-    .sponsors li, .comments li, .rules li { 
+    .sponsors li, .comments li, .gamble li, .rules li { 
       background:#1a2330; 
       border:1px solid #2a3442; 
       border-radius:8px; 
@@ -47,7 +47,7 @@
 </head>
 <body>
   <header>
-    <h1>Legoland Semen Retention Competition 2025</h1>
+    <h1>Legoland Semen Retention Battle Royale 2025</h1>
     <p>Who's the strongest of them all</p>
   </header>
 
@@ -67,6 +67,14 @@
   <section class="comments">
     <h3>Comments</h3>
     <ul id="commentList"></ul>
+  </section>
+
+  <section class="gamble">
+    <h3>Gamble</h3>
+    <h4>First Out</h4>
+    <ul id="firstOutList"></ul>
+    <h4>Winner</h4>
+    <ul id="winnerList"></ul>
   </section>
 
   <section class="rules">
@@ -100,6 +108,16 @@
       { name: 'Crow Tramell', message: 'b( • )( • )bies' },
       { name: 'Tony', message: 'Cory is number 1 because he is the number 1 to lose' }
     ];
+
+    // Gamble dictionary
+    const gamble = {
+      firstOut: [
+        { contestant: 'Cory', amount: 0, bettor: 'Squid' }
+      ],
+      winner: [
+        { contestant: 'Tony', amount: 0, bettor: 'Squid' }
+      ]
+    };
 
     // Rules dictionary
     const rules = [
@@ -153,6 +171,24 @@
         const li = document.createElement('li');
         li.innerHTML = `<strong>${c.name}</strong>: <em>${c.message}</em>`;
         commentList.appendChild(li);
+      });
+
+      // gamble - First Out
+      const firstOutList = document.getElementById('firstOutList');
+      firstOutList.innerHTML = '';
+      gamble.firstOut.forEach(g => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${g.contestant}</strong> — $${g.amount} (by ${g.bettor})`;
+        firstOutList.appendChild(li);
+      });
+
+      // gamble - Winner
+      const winnerList = document.getElementById('winnerList');
+      winnerList.innerHTML = '';
+      gamble.winner.forEach(g => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${g.contestant}</strong> — $${g.amount} (by ${g.bettor})`;
+        winnerList.appendChild(li);
       });
 
       // rules
