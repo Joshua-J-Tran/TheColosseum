@@ -1,211 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Legoland Battle Royale 2025</title>
-  <style>
-    body { font-family: system-ui, sans-serif; background: #0b0f14; color: #e6edf3; margin: 0; }
-    header { padding: 20px; text-align: center; background: #121923; }
-    h1 { margin: 0; font-size: 2em; }
-    .summary { padding: 16px; text-align: center; background:#18222e; }
-    .summary h2 { margin: 0 0 8px; font-size: 1.2em; }
-    .board { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 14px; padding: 20px; }
-    .card { background: #1a2330; border: 1px solid #2a3442; border-radius: 12px; overflow: hidden; position: relative; text-align: center; }
-    .card img { width: 100%; height: 200px; object-fit: cover; display: block; }
-    .meta { padding: 10px; }
-    .name { font-weight: bold; margin: 6px 0; }
-    .notes { color: #9aa6b2; font-size: 0.9em; }
-    .x { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 2em; font-weight: bold; color: rgba(255,90,95,.9); background: rgba(0,0,0,.6); opacity: 0; transition: opacity .3s ease; }
-    .out .x { opacity: 1; }
-    .out img { filter: grayscale(90%) brightness(.6); }
-    .out .name { text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: #ff5a5f; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Legoland Battle Royale 2025</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        background: #0b0f14;
+        color: #e6edf3;
+        margin: 0;
+      }
+      header {
+        padding: 20px;
+        text-align: center;
+        background: #121923;
+      }
+      h1 {
+        margin: 0;
+        font-size: 2em;
+      }
+      .summary {
+        padding: 16px;
+        text-align: center;
+        background: #18222e;
+      }
+      .summary h2 {
+        margin: 0 0 8px;
+        font-size: 1.2em;
+      }
+      .board {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px;
+        padding: 20px;
+      }
+      .card {
+        perspective: 1000px;
+        cursor: pointer;
+      }
+      .inner {
+        position: relative;
+        width: 100%;
+        height: 280px;
+        text-align: center;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+      }
+      .card.flipped .inner {
+        transform: rotateY(180deg);
+      }
+      .front,
+      .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border: 1px solid #2a3442;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #1a2330;
+      }
+      .front img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+      }
+      .meta {
+        padding: 10px;
+      }
+      .name {
+        font-weight: bold;
+        margin: 6px 0;
+      }
+      .notes {
+        color: #9aa6b2;
+        font-size: 0.9em;
+      }
+      .x {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2em;
+        font-weight: bold;
+        color: rgba(255, 90, 95, 0.9);
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .out .x {
+        opacity: 1;
+      }
+      .out img {
+        filter: grayscale(90%) brightness(0.6);
+      }
+      .out .name {
+        text-decoration: line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-color: #ff5a5f;
+      }
 
-    .sponsors strong, .comments strong, .gamble strong { color:#ffd166; }
-    .comments em, .gamble em { color:#9aa6b2; font-style: normal; }
+      .back {
+        transform: rotateY(180deg);
+        font-size: 0.9em;
+      }
+      .back strong {
+        color: #ffd166;
+      }
 
-    .sponsors, .comments, .gamble, .rules { 
-      padding: 0 20px 20px; 
-    }
-    .sponsors h3, .comments h3, .gamble h3, .rules h3 { 
-      margin: 0 0 8px; 
-      font-size: 1.1em; 
-    }
-    .sponsors ul, .comments ul, .gamble ul, .rules ul { 
-      list-style: none; 
-      padding: 0; 
-      margin: 0; 
-    }
-    .sponsors li, .comments li, .gamble li, .rules li { 
-      background:#1a2330; 
-      border:1px solid #2a3442; 
-      border-radius:8px; 
-      padding:8px 10px; 
-      margin-bottom:6px; 
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Legoland Battle Royale 2025</h1>
-    <p>Who's the strongest of them all</p>
-  </header>
+      /* Jiggle animation */
+      @keyframes jiggle {
+        0% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(2deg);
+        }
+        50% {
+          transform: rotate(-2deg);
+        }
+        75% {
+          transform: rotate(2deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+      .jiggle {
+        animation: jiggle 0.3s;
+      }
 
-  <section class="summary">
-    <h2 id="prizePool">Prize Pool: $0</h2>
-  </section>
+      .sponsors strong,
+      .comments strong,
+      .gamble strong {
+        color: #ffd166;
+      }
+      .comments em,
+      .gamble em {
+        color: #9aa6b2;
+        font-style: normal;
+      }
 
-  <main>
-    <section class="board" id="board"></section>
-  </main>
+      .sponsors,
+      .comments,
+      .gamble,
+      .rules {
+        padding: 0 20px 20px;
+      }
+      .sponsors h3,
+      .comments h3,
+      .gamble h3,
+      .rules h3 {
+        margin: 0 0 8px;
+        font-size: 1.1em;
+      }
+      .sponsors ul,
+      .comments ul,
+      .gamble ul,
+      .rules ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .sponsors li,
+      .comments li,
+      .gamble li,
+      .rules li {
+        background: #1a2330;
+        border: 1px solid #2a3442;
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin-bottom: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Legoland Battle Royale 2025</h1>
+      <p>Who's the strongest of them all</p>
+    </header>
 
-  <section class="sponsors">
-    <h3>Sponsors</h3>
-    <ul id="sponsorList"></ul>
-  </section>
+    <section class="summary">
+      <h2 id="prizePool">Prize Pool: $0</h2>
+    </section>
 
-  <section class="comments">
-    <h3>Comments</h3>
-    <ul id="commentList"></ul>
-  </section>
+    <main>
+      <section class="board" id="board"></section>
+    </main>
 
-  <section class="gamble">
-    <h3>Gamble</h3>
-    <h4>First Out</h4>
-    <ul id="firstOutList"></ul>
-    <h4>Winner</h4>
-    <ul id="winnerList"></ul>
-  </section>
+    <section class="sponsors">
+      <h3>Sponsors</h3>
+      <ul id="sponsorList"></ul>
+    </section>
 
-  <section class="rules">
-    <h3>Rules</h3>
-    <ul id="ruleList"></ul>
-  </section>
+    <section class="comments">
+      <h3>Comments</h3>
+      <ul id="commentList"></ul>
+    </section>
 
-  <script>
-    // Hardcoded participants dictionary
-    const participants = [
-      { name: 'Cory', notes: 'Contestant #1', image: 'cory.jpg', out: false },
-      { name: 'Ted', notes: 'Contestant #3', image: 'ted.jpg', out: false },
-      { name: 'Stephen', notes: 'Contestant #4', image: 'stephen.jpg', out: false },
-      { name: 'Trammell', notes: 'Contestant #5', image: 'trammell.jpg', out: true },
-      { name: 'Tony', notes: 'Contestant #7', image: 'tony.jpg', out: false },
-      { name: 'Jack', notes: 'Contestant #10', image: 'jack.jpg', out: false },
-      { name: 'Khang', notes: 'Contestant #14', image: 'khang.jpg', out: false },
-      { name: 'Victor', notes: 'Contestant #21', image: 'victor.jpg', out: false },
-      { name: 'Andrew', notes: 'Contestant #23', image: 'astral.png', out: false },
-      { name: 'Julio', notes: 'Contestant #67', image: 'julio.png', out: false },
-      { name: 'Paul', notes: 'Contestant #69', image: 'paul.jpg', out: false }
-    ];
+    <section class="gamble">
+      <h3>Gamble</h3>
+      <h4>First Out</h4>
+      <ul id="firstOutList"></ul>
+      <h4>Winner</h4>
+      <ul id="winnerList"></ul>
+    </section>
 
-    // Sponsors dictionary
-    const sponsors = [
-      { name: 'Kream', amount: 50, note: 'I, Kream, am your proud and honorable sponsor! I am glad to provide a crisp $50 bill to whoever wins this event. Thank you for each participant who participates and may the best retention win!! ' }
-    ];
+    <section class="rules">
+      <h3>Rules</h3>
+      <ul id="ruleList"></ul>
+    </section>
 
-    // Comments dictionary
-    const comments = [
-      { name: 'Joss Jones', message: 'Is this shit real?' },
-      { name: 'CJ', message: 'I\'d win if I participate, okay?' },
-      { name: 'Cory', message: 'The sea is for the seamen' } ,
-      { name: 'Crow Tramell', message: 'b( • )( • )bies' },
-      { name: 'Tony', message: 'Cory is number 1 because he is the number 1 to lose' }
+    <script>
+      // Hardcoded participants dictionary
+      const participants = [
+        { name: "Cory", notes: "Contestant #1", image: "cory.jpg", out: false },
+        { name: "Ted", notes: "Contestant #3", image: "ted.jpg", out: false },
+        {
+          name: "Stephen",
+          notes: "Contestant #4",
+          image: "stephen.jpg",
+          out: false,
+        },
+        {
+          name: "Crow",
+          notes: "Contestant #5",
+          image: "trammell.jpg",
+          out: true,
+        },
+        { name: "Tony", notes: "Contestant #7", image: "tony.jpg", out: false },
+        {
+          name: "Jack",
+          notes: "Contestant #10",
+          image: "jack.jpg",
+          out: false,
+        },
+        {
+          name: "Khang",
+          notes: "Contestant #14",
+          image: "khang.jpg",
+          out: false,
+        },
+        {
+          name: "Victor",
+          notes: "Contestant #21",
+          image: "victor.jpg",
+          out: false,
+        },
+        {
+          name: "Andrew",
+          notes: "Contestant #23",
+          image: "astral.png",
+          out: false,
+        },
+        {
+          name: "Julio",
+          notes: "Contestant #67",
+          image: "julio.png",
+          out: false,
+        },
+        {
+          name: "Paul",
+          notes: "Contestant #69",
+          image: "paul.jpg",
+          out: false,
+        },
+      ];
 
-    ];
+      // Sponsors dictionary
+      const sponsors = [
+        {
+          name: "Kream",
+          amount: 50,
+          note: "I, Kream, am your proud and honorable sponsor! I am glad to provide a crisp $50 bill to whoever wins this event. Thank you for each participant who participates and may the best retention win!! ",
+        },
+      ];
 
-    // Gamble dictionary
-    const gamble = {
-      firstOut: [
-        { contestant: 'Cory', amount: 0, bettor: 'Squid' }
-      ],
-      winner: [
-        { contestant: 'Tony', amount: 0, bettor: 'Squid' }
-      ]
-    };
+      // Comments dictionary
+      const comments = [
+        { name: "Joss Jones", message: "Is this shit real?" },
+        { name: "CJ", message: "I'd win if I participate, okay?" },
+        { name: "Cory", message: "The sea is for the seamen" },
+        { name: "Crow Tramell", message: "b( • )( • )bies" },
+        {
+          name: "Tony",
+          message: "Cory is number 1 because he is the number 1 to lose",
+        },
+      ];
 
-    // Rules dictionary
-    const rules = [
-      { text: 'Each participant contributes $10' },
-      { text: 'Competition lasts until last man standing' },
-      { text: 'Participants must choose a corresponding number and will be displayed on the website' },
-      { text: 'The competition is run via an honor system and you must self-report if you are out' },
-      { text: 'By joining the challenge, you\'re sworn to secrecy, spilling the beans mean disqualification' }
-    ];
+      // Gamble dictionary
+      const gamble = {
+        winner: [{ contestant: "Tony", amount: 0, bettor: "Squid" }],
+      };
 
-    function render(){
-      // prize pool
-      const outCount = participants.filter(p => p.out).length;
-      const poolFromElims = outCount * 10;
-      const poolFromSponsors = sponsors.reduce((sum, s) => sum + s.amount, 0);
-      const pool = poolFromElims + poolFromSponsors;
+      // Rules dictionary
+      const rules = [
+        { text: "Each participant contributes $10" },
+        { text: "Competition lasts until last man standing" },
+        {
+          text: "Participants must choose a corresponding number and will be displayed on the website",
+        },
+        {
+          text: "The competition is run via an honor system and you must self-report if you are out",
+        },
+        {
+          text: "By joining the challenge, you're sworn to secrecy, spilling the beans mean disqualification",
+        },
+      ];
 
-      document.getElementById('prizePool').textContent =
-          `Prize Pool: $${pool} (Elims $${poolFromElims} + Sponsors $${poolFromSponsors})`;
+      const details = {
+        Crow: {
+          status: "Eliminated",
+          contribution: "$10",
+          material: "Japanese Lesbian porn",
+        },
+      };
 
-      // participants
-      const board = document.getElementById('board');
-      board.innerHTML = '';
-      participants.forEach(p => {
-        const card = document.createElement('article');
-        card.className = 'card' + (p.out ? ' out' : '');
-        card.innerHTML = `
-          <img src="${p.image}" alt="${p.name}" />
-          <div class="x">X</div>
-          <div class="meta">
-            <div class="name">${p.name}</div>
-            <div class="notes">${p.notes}</div>
+      function render() {
+        // prize pool
+        const outCount = participants.filter((p) => p.out).length;
+        const poolFromElims = outCount * 10;
+        const poolFromSponsors = sponsors.reduce((sum, s) => sum + s.amount, 0);
+        const pool = poolFromElims + poolFromSponsors;
+
+        document.getElementById(
+          "prizePool"
+        ).textContent = `Prize Pool: $${pool} (Elims $${poolFromElims} + Sponsors $${poolFromSponsors})`;
+
+        // participants
+        const board = document.getElementById("board");
+        board.innerHTML = "";
+        participants.forEach((p) => {
+          const card = document.createElement("article");
+          card.className = "card" + (p.out ? " out" : "");
+          card.innerHTML = `
+          <div class="inner">
+            <div class="front">
+              <img src="${p.image}" alt="${p.name}" />
+              <div class="x">X</div>
+              <div class="meta">
+                <div class="name">${p.name}</div>
+                <div class="notes">${p.notes}</div>
+              </div>
+            </div>
+            <div class="back">
+              <div><strong style="font-size: 40px;">${p.name}</strong></div>
+              <div style="padding-top: 50px; padding-bottom: 50px;"></div>
+              <div>Status: ${details[p.name]?.status || "Unknown"}</div>
+              <div>Contribution: ${details[p.name]?.contribution || "N/A"}</div>
+              <div>Material: ${details[p.name]?.material || "N/A"}</div>
+            </div>
           </div>
         `;
-        board.appendChild(card);
-      });
+          // click behavior
+          card.addEventListener("click", () => {
+            if (details[p.name]) {
+              card.classList.toggle("flipped");
+            } else {
+              card.classList.add("jiggle");
+              setTimeout(() => card.classList.remove("jiggle"), 300);
+            }
+          });
+          board.appendChild(card);
+        });
 
-      // sponsors
-      const sponsorList = document.getElementById('sponsorList');
-      sponsorList.innerHTML = '';
-      sponsors.forEach(s => {
-        const li = document.createElement('li');
-        li.innerHTML = `<strong>${s.name}</strong> — $${s.amount} <br><em>${s.note}</em>`;
-        sponsorList.appendChild(li);
-      });
+        // sponsors
+        const sponsorList = document.getElementById("sponsorList");
+        sponsorList.innerHTML = "";
+        sponsors.forEach((s) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${s.name}</strong> — $${s.amount} <br><em>${s.note}</em>`;
+          sponsorList.appendChild(li);
+        });
 
-      // comments
-      const commentList = document.getElementById('commentList');
-      commentList.innerHTML = '';
-      comments.forEach(c => {
-        const li = document.createElement('li');
-        li.innerHTML = `<strong>${c.name}</strong>: <em>${c.message}</em>`;
-        commentList.appendChild(li);
-      });
+        // comments
+        const commentList = document.getElementById("commentList");
+        commentList.innerHTML = "";
+        comments.forEach((c) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${c.name}</strong>: <em>${c.message}</em>`;
+          commentList.appendChild(li);
+        });
 
-      // gamble - First Out
-      const firstOutList = document.getElementById('firstOutList');
-      firstOutList.innerHTML = '';
-      gamble.firstOut.forEach(g => {
-        const li = document.createElement('li');
-        li.innerHTML = `<strong>${g.contestant}</strong> — $${g.amount} (by ${g.bettor})`;
-        firstOutList.appendChild(li);
-      });
+        // gamble - First Out
+        const firstOutList = document.getElementById("firstOutList");
+        firstOutList.innerHTML = "";
+        gamble.firstOut.forEach((g) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${g.contestant}</strong> — $${g.amount} (by ${g.bettor})`;
+          firstOutList.appendChild(li);
+        });
 
-      // gamble - Winner
-      const winnerList = document.getElementById('winnerList');
-      winnerList.innerHTML = '';
-      gamble.winner.forEach(g => {
-        const li = document.createElement('li');
-        li.innerHTML = `<strong>${g.contestant}</strong> — $${g.amount} (by ${g.bettor})`;
-        winnerList.appendChild(li);
-      });
+        // gamble - Winner
+        const winnerList = document.getElementById("winnerList");
+        winnerList.innerHTML = "";
+        gamble.winner.forEach((g) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${g.contestant}</strong> — $${g.amount} (by ${g.bettor})`;
+          winnerList.appendChild(li);
+        });
 
-      // rules
-      const ruleList = document.getElementById('ruleList');
-      ruleList.innerHTML = '';
-      rules.forEach(r => {
-        const li = document.createElement('li');
-        li.textContent = r.text;
-        ruleList.appendChild(li);
-      });
-    }
+        // rules
+        const ruleList = document.getElementById("ruleList");
+        ruleList.innerHTML = "";
+        rules.forEach((r) => {
+          const li = document.createElement("li");
+          li.textContent = r.text;
+          ruleList.appendChild(li);
+        });
+      }
 
-    render();
-  </script>
-</body>
+      render();
+    </script>
+  </body>
 </html>
