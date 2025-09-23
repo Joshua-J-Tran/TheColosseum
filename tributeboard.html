@@ -201,14 +201,6 @@
       <ul id="commentList"></ul>
     </section>
 
-    <section class="gamble">
-      <h3>Gamble</h3>
-      <h4>First Out</h4>
-      <ul id="firstOutList"></ul>
-      <h4>Winner</h4>
-      <ul id="winnerList"></ul>
-    </section>
-
     <section class="rules">
       <h3>Rules</h3>
       <ul id="ruleList"></ul>
@@ -391,30 +383,12 @@
           commentList.appendChild(li);
         });
 
-        // gamble - First Out
-        const firstOutList = document.getElementById("firstOutList");
-        firstOutList.innerHTML = "";
-        gamble.firstOut.forEach((g) => {
-          const li = document.createElement("li");
-          li.innerHTML = `<strong>${g.contestant}</strong> — $${g.amount} (by ${g.bettor})`;
-          firstOutList.appendChild(li);
-        });
-
-        // gamble - Winner
-        const winnerList = document.getElementById("winnerList");
-        winnerList.innerHTML = "";
-        gamble.winner.forEach((g) => {
-          const li = document.createElement("li");
-          li.innerHTML = `<strong>${g.contestant}</strong> — $${g.amount} (by ${g.bettor})`;
-          winnerList.appendChild(li);
-        });
-
         // rules
         const ruleList = document.getElementById("ruleList");
         ruleList.innerHTML = "";
         rules.forEach((r) => {
           const li = document.createElement("li");
-          li.textContent = r.text;
+          li.innerHTML = `<em>${r.text}</em>`;
           ruleList.appendChild(li);
         });
       }
