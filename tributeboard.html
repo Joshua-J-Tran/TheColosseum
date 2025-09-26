@@ -210,7 +210,7 @@
       // Hardcoded participants dictionary
       const participants = [
         { name: "Cory", notes: "Contestant #1", image: "cory.jpg", out: true },
-        { name: "Ted", notes: "Contestant #3", image: "ted.jpg", out: false },
+        { name: "Ted", notes: "Contestant #3", image: "ted.jpg", out: true },
         {
           name: "Stephen",
           notes: "Contestant #4",
@@ -315,6 +315,11 @@
           contribution: "$10",
           material: "Bonked in the head by 2 women of Japanese descent",
         },
+        Ted: {
+          status: "Eliminated",
+          contribution: "$10",
+          material: "Criminal Syndicate of Asian origin",
+        },
         Cory: {
           status: "Eliminated",
           contribution: "$10",
@@ -367,7 +372,7 @@
               <div style="padding-top: 40px; padding-bottom: 40px;"></div>
               <div>Status: ${details[p.name]?.status || "Unknown"}</div>
               <div>Contribution: ${details[p.name]?.contribution || "N/A"}</div>
-              <div>Killed by: ${details[p.name]?.material || "N/A"}</div>
+              <div>Dead by: ${details[p.name]?.material || "N/A"}</div>
             </div>
           </div>
         `;
